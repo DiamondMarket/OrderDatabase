@@ -60,9 +60,8 @@ public class OrderController {
 		headers.add("correlationId", context.getCorrelationId());
 		headers.add("ApplicationLabel", context.getApplicationLabel());
 		headers.add("Content-Type", "application/json");
-		Data<Object> data = new Data<>(object);
-		Response response = new Response();
-		response.setData(data);
+		Response<Object> response = new Response<>();
+		response.setData(object);
 		response.setTimeStamp(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
 		
 		ResponseEntity<Response> responseEntity = new ResponseEntity<Response>(response, headers , httpStatus);
