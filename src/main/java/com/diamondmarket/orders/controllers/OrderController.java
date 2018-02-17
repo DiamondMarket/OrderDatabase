@@ -5,8 +5,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.inject.Singleton;
 import javax.naming.spi.DirStateFactory.Result;
+import javax.ws.rs.core.Application;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -23,11 +26,16 @@ import com.diamondmarket.orders.model.Data;
 import com.diamondmarket.orders.model.Orders;
 import com.diamondmarket.orders.model.Response;
 import com.diamondmarket.orders.model.TransactionContext;
+import com.diamondmarket.orders.repository.OrderRepository;
 import com.diamondmarket.orders.model.Error;
 @RestController
 public class OrderController {
 	
-	@RequestMapping(value = "v1/orders", method = RequestMethod.GET)
+	@Autowired
+	@Singleton
+	OrderRepository orderRepository;
+	
+	@RequestMapping(value = "v1/orders", produces = "application/json" , method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<Response> getOrders(@RequestHeader HttpHeaders httpHeaders, @RequestParam("orderId") String orderId) {
 		
 		TransactionContext context = new TransactionContext();
@@ -42,19 +50,16 @@ public class OrderController {
 			context.setApplicationLabel("demo");
 		}
 		
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("oauth id", "Orders");
-		
-
-		 ResponseEntity<Response> responseEntity = new ResponseEntity<Response>(headers ,HttpStatus.OK);
-		 return responseEntity;
+		Orders order = orderRepository.findOne(orderId);
+		 return successResponse(context, order, HttpStatus.OK);
 		 
 	}
 	
-	private HttpEntity<Response> successResponse(TransactionContext context, Object object, HttpStatus httpStatus){
+	private ResponseEntity<Response> successResponse(TransactionContext context, Object object, HttpStatus httpStatus){
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("correlationId", context.getCorrelationId());
 		headers.add("ApplicationLabel", context.getApplicationLabel());
+		headers.add("Content-Type", "application/json");
 		Data<Object> data = new Data<>(object);
 		Response response = new Response();
 		response.setData(data);
@@ -64,11 +69,11 @@ public class OrderController {
 		return responseEntity;
 	}
 	
-	private HttpEntity<Response> errorResponse(TransactionContext context, Exception exception, HttpStatus httpStatus){
+	private ResponseEntity<Response> errorResponse(TransactionContext context, Exception exception, HttpStatus httpStatus){
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("correlationId", context.getCorrelationId());
 		headers.add("ApplicationLabel", context.getApplicationLabel());
-		
+		headers.add("Content-Type", "application/json");
 		Error error = new Error();
 		error.setCode(httpStatus.toString() + "0001");
 		error.setReason(exception.getMessage());
