@@ -1,6 +1,7 @@
 
 package com.diamondmarket.orders.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -8,7 +9,6 @@ import org.springframework.data.annotation.Id;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown=true)
@@ -17,7 +17,7 @@ public class Orders {
     @JsonProperty("_id")
     private String id;
     @JsonProperty("orders")
-    private List<Order> orders;
+    private ArrayList<Order> orders;
 
     @JsonProperty("_id")
     public String getId() {
@@ -33,7 +33,7 @@ public class Orders {
 		return orders;
 	}
 
-	public void setOrders(List<Order> orders) {
+	public void setOrders(ArrayList<Order> orders) {
 		this.orders = orders;
 	}
 
