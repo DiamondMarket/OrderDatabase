@@ -37,78 +37,41 @@ public class OrderController {
 		this.deleteOrdersService = deleteOrdersService;
 		this.getOrderService = getOrderService;
 		this.placeOrderService = placeOrderService;
-		// TODO Auto-generated constructor stub
 	}
 	
-	@RequestMapping(value = "v1/orders", produces = "application/json" , method = RequestMethod.GET)
+	@RequestMapping(value = "orders", produces = "application/json" , method = RequestMethod.GET)
 	public ResponseEntity<Response> getOrders(@RequestHeader HttpHeaders httpHeaders, @RequestParam("orderId") String orderId) {
 		
-		TransactionContext context = new TransactionContext();
-		if(httpHeaders.get("correlationId") != null) {
-			context.setCorrelationId(httpHeaders.get("correlationId").toString());	
-		} else {
-			context.setCorrelationId("demo");
-		}
-		if(httpHeaders.get("ApplicationLabel") != null) {
-			context.setApplicationLabel(httpHeaders.get("ApplicationLabel").toString());
-		} else {
-			context.setApplicationLabel("demo");
-		}
+		TransactionContext context = generateTransationContext(httpHeaders);
 		
 		try {
 			return successResponse(context, getOrderService.getOrders(context, orderId), HttpStatus.OK);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return errorResponse(context, e, HttpStatus.BAD_REQUEST);
 		}
 	}
 	
-	@RequestMapping(value = "v1/orders/deleteOrders", produces = "application/json" , method = RequestMethod.DELETE)
+	@RequestMapping(value = "orders/deleteOrders", produces = "application/json" , method = RequestMethod.DELETE)
 	public ResponseEntity<Response> deleteOrders(@RequestHeader HttpHeaders httpHeaders, @RequestParam("orderId") String orderId) {
 		
-		TransactionContext context = new TransactionContext();
-		if(httpHeaders.get("correlationId") != null) {
-			context.setCorrelationId(httpHeaders.get("correlationId").toString());	
-		} else {
-			context.setCorrelationId("demo");
-		}
-		if(httpHeaders.get("ApplicationLabel") != null) {
-			context.setApplicationLabel(httpHeaders.get("ApplicationLabel").toString());
-		} else {
-			context.setApplicationLabel("demo");
-		}
+		TransactionContext context = generateTransationContext(httpHeaders);
 		
 		try {
 			deleteOrdersService.deleteOrders(context, orderId);
 			return successResponse(context, "user orders are successfully deleted with userId " + orderId, HttpStatus.OK);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return errorResponse(context, e, HttpStatus.BAD_REQUEST);
 		}
 	}
 	
-	@RequestMapping(value = "v1/orders/placeOrder", produces = "application/json" , method = RequestMethod.POST)
+	@RequestMapping(value = "orders/placeOrder", produces = "application/json" , method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity<Response> placeOrder(@RequestHeader HttpHeaders httpHeaders, @RequestBody InputRequest inputRequest) {
 		
-		TransactionContext context = new TransactionContext();
-		if(httpHeaders.get("correlationId") != null) {
-			context.setCorrelationId(httpHeaders.get("correlationId").toString());	
-		} else {
-			context.setCorrelationId("demo");
-		}
-		if(httpHeaders.get("ApplicationLabel") != null) {
-			context.setApplicationLabel(httpHeaders.get("ApplicationLabel").toString());
-		} else {
-			context.setApplicationLabel("demo");
-		}
+		TransactionContext context = generateTransationContext(httpHeaders);
 		
 		try {
 			return successResponse(context, placeOrderService.placeOrder(inputRequest), HttpStatus.OK);
 		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
 			return errorResponse(context, e, HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -139,5 +102,21 @@ public class OrderController {
 		response.setTimeStamp(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
 		ResponseEntity<Response> responseEntity = new ResponseEntity<Response>(response, headers, httpStatus);
 		return responseEntity;
+	}
+	
+	private TransactionContext generateTransationContext(HttpHeaders httpHeaders) {
+		
+		TransactionContext context = new TransactionContext();
+		if(httpHeaders.get("correlationId") != null) {
+			context.setCorrelationId(httpHeaders.get("correlationId").toString());	
+		} else {
+			context.setCorrelationId("demo");
+		}
+		if(httpHeaders.get("ApplicationLabel") != null) {
+			context.setApplicationLabel(httpHeaders.get("ApplicationLabel").toString());
+		} else {
+			context.setApplicationLabel("demo");
+		}
+		return context;
 	}
 }

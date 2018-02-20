@@ -15,7 +15,6 @@ public class PlaceOrderService {
 	@Autowired
 	public PlaceOrderService(OrderRepository orderRepository) {		
 			this.orderRepository = orderRepository;
-			// TODO Auto-generated constructor stub
 	}
 	
 	public Orders placeOrder(InputRequest inputRequest) throws Exception {
@@ -38,7 +37,6 @@ public class PlaceOrderService {
 				}
 				return save;
 			} catch (Exception e) {
-				// TODO: handle exception
 				e.printStackTrace();
 				throw new PlaceOrderException(e.getMessage(), e);
 			}

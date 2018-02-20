@@ -16,7 +16,6 @@ public class GetOrderService {
 	@Autowired
 	public GetOrderService(OrderRepository orderRepository) {		
 		this.orderRepository = orderRepository;
-		// TODO Auto-generated constructor stub
 	}
 
 

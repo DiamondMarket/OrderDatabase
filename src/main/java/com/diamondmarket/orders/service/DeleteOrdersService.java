@@ -17,19 +17,16 @@ public class DeleteOrdersService {
 	@Autowired
 	public DeleteOrdersService(OrderRepository orderRepository) {		
 			this.orderRepository = orderRepository;
-			// TODO Auto-generated constructor stub
 	}
 	
 	public void deleteOrders(TransactionContext context, String orderId) throws DeleteOrderException {
-		 Orders findOne = orderRepository.findOne(orderId);
-		 if (findOne == null) {
+		 Orders order = orderRepository.findOne(orderId);
+		 if (order == null) {
 			 throw new DeleteOrderException("no orders are available for this user");
 		 }
 		try {
 			orderRepository.delete(orderId);
 		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
 			throw new DeleteOrderException(e.getMessage(), e);
 		}
 		
